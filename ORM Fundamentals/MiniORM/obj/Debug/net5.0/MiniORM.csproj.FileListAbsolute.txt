@@ -1,0 +1,15 @@
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\bin\Debug\net5.0\MiniORM.deps.json
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\bin\Debug\net5.0\MiniORM.runtimeconfig.json
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\bin\Debug\net5.0\MiniORM.runtimeconfig.dev.json
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\bin\Debug\net5.0\MiniORM.dll
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\bin\Debug\net5.0\ref\MiniORM.dll
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\bin\Debug\net5.0\MiniORM.pdb
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.AssemblyInfoInputs.cache
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.AssemblyInfo.cs
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.dll
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\ref\MiniORM.dll
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.pdb
+C:\Users\user\source\repos\ORM Fundamentals\MiniORM\obj\Debug\net5.0\MiniORM.genruntimeconfig.cache
