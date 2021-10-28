@@ -14,7 +14,86 @@ namespace SoftUni
         {
             SoftUniContext context = new SoftUniContext();
 
-            Console.WriteLine(IncreaseSalaries(context));
+            Console.WriteLine(RemoveTown(context));
+        }
+
+        //Problem 15
+
+        public static string RemoveTown(SoftUniContext context)
+        {
+            var employees = context.Employees
+                .Where(e => e.Address.Town.Name == "Seattle")
+                .ToArray();
+
+            foreach (var e in employees)
+            {
+                e.AddressId = null;
+            }
+
+            Address[] addresses = context.Addresses
+                .Where(a => a.Town.Name == "Seattle")
+                .ToArray();
+
+            context.RemoveRange(addresses);
+
+            Town seattle = context.Towns
+                .FirstOrDefault(t => t.Name == "Seattle");
+
+            context.Remove(seattle);
+
+            context.SaveChanges();
+
+            return $"{addresses.Count()} addresses in Seattle were deleted";
+        }
+
+        //Problem 14
+
+        public static string DeleteProjectById(SoftUniContext context)
+        {
+            var employeesProjects = context.EmployeesProjects
+                .Where(ep => ep.ProjectId == 2);
+
+            context.EmployeesProjects.RemoveRange(employeesProjects);
+
+            Project project = context.Projects
+                .Find(2);
+
+            context.Projects.Remove(project);
+
+            context.SaveChanges();
+
+            var projects = context.Projects
+                .Take(10)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var p in projects)
+            {
+                sb.AppendLine(p.Name);
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        // Problem 13
+
+        public static string GetEmployeesByFirstNameStartingWithSa(SoftUniContext context)
+        {
+            var employees = context.Employees
+                .Where(e => e.FirstName.StartsWith("Sa"))
+                .OrderBy(e => e.FirstName)
+                .ThenBy(e => e.LastName)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var e in employees)
+            {
+                sb.AppendLine($"{e.FirstName} {e.LastName} - {e.JobTitle} - (${e.Salary:F2})");
+            }
+
+            return sb.ToString().Trim();
         }
 
         //Problem 12
@@ -25,15 +104,12 @@ namespace SoftUni
                 .Where(e => e.Department.Name == "Engineering"
                             || e.Department.Name == "Tool Design"
                             || e.Department.Name == "Marketing"
-                            || e.Department.Name == "Information Services ")
+                            || e.Department.Name == "Information Services")
                 .OrderBy(e => e.FirstName)
                 .ThenBy(e => e.LastName)
-                .ToArray();
+                .ToList();
 
-            foreach (var e in employees)
-            {
-                e.Salary *= 1.12M;
-            }
+            employees.ForEach(e => e.Salary *= 1.12m);
 
             context.SaveChanges();
 
