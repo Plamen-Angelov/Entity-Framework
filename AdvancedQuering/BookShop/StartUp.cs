@@ -1,5 +1,6 @@
 ﻿namespace BookShop
 {
+    using BookShop.Models;
     using BookShop.Models.Enums;
     using Data;
     using Initializer;
@@ -14,7 +15,7 @@
         public static void Main()
         {
             using var db = new BookShopContext();
-            //DbInitializer.ResetDatabase(db);
+            DbInitializer.ResetDatabase(db);
 
             //// Problem 2
             //string command = Console.ReadLine().ToLower();
@@ -56,8 +57,14 @@
             //Console.WriteLine(GetTotalProfitByCategory(db));
 
             //Problem 14
-            Console.WriteLine(GetMostRecentBooks(db));
+            //Console.WriteLine(GetMostRecentBooks(db));
 
+            //Problem 15
+            //IncreasePrices(db);
+
+
+            //Problem 16
+            //Console.WriteLine(RemoveBooks(db));
         }
 
         public static string GetBooksByAgeRestriction(BookShopContext context, string command)
@@ -346,6 +353,34 @@
             }
 
             return sb.ToString().TrimEnd();
+        }
+
+        public static void IncreasePrices(BookShopContext context)
+        {
+            Book[] books = context.Books
+                .Where(b => b.ReleaseDate.Value.Year < 2010)
+                .ToArray();
+
+            foreach (var book in books)
+            {
+                book.Price += 5;
+            }
+
+            context.SaveChanges();
+        }
+
+        public static int RemoveBooks(BookShopContext context)
+        {
+            Book[] booksToDelete = context
+                .Books
+                .Where(b => b.Copies < 4200)
+                .ToArray();
+
+            context.RemoveRange(booksToDelete);
+
+            context.SaveChanges();
+
+            return booksToDelete.Length;
         }
     }
 }
