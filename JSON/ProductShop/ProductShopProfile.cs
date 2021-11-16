@@ -9,6 +9,12 @@ namespace ProductShop
         public ProductShopProfile()
         {
             CreateMap<UserInputDto, User>();
+
+            CreateMap<ProductInputDto, Product>();
+
+            CreateMap<CategoryDto, Category>();
+
+            CreateMap<CategoryProductDto, CategoryProduct>();
         }
     }
 }
