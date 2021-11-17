@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using ProductShop.Data;
 using ProductShop.DTOs;
 using ProductShop.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProductShop
 {
@@ -38,14 +37,90 @@ namespace ProductShop
             //Console.WriteLine(GetProductsInRange(context));
             ////Task 6
             //Console.WriteLine(GetSoldProducts(context));
-            //Task 7
-            Console.WriteLine(GetCategoriesByProductsCount(context));
+            ////Task 7
+            //Console.WriteLine(GetCategoriesByProductsCount(context));
+            ////Task 8
+            //Console.WriteLine(GetUsersWithProducts(context));
+        }
+
+        //Task 8
+
+        public static string GetUsersWithProducts(ProductShopContext context)
+        {
+            var users = context
+                .Users
+                .Where(u => u.ProductsSold.Any(p => p.Buyer != null))
+                .OrderByDescending(u => u.ProductsSold.Count(p => p.Buyer != null))
+                .Select(u => new
+                {
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Age = u.Age,
+                    SoldProducts = new
+                    {
+                        Count = u.ProductsSold
+                        .Where(p => p.Buyer != null)
+                        .Count(p => p.Buyer != null),
+
+                        Products = u.ProductsSold
+                        .Where(p => p.Buyer != null)
+                        .Select(p => new
+                        {
+                            p.Name,
+                            p.Price
+                        })
+                    }
+                })
+                .ToList();
+
+            DefaultContractResolver resolver = new DefaultContractResolver()
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                ContractResolver = resolver,
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            var usersDto = new
+            {
+                Count = users.Count(),
+                Users = users
+            };
+
+            string usersJson = JsonConvert.SerializeObject(usersDto, settings);
+            return usersJson;
         }
 
         //Task 7
         public static string GetCategoriesByProductsCount(ProductShopContext context)
         {
+            var categories = context
+                .Categories
+                .OrderByDescending(c => c.CategoryProducts.Count)
+                .Select(c => new
+                {
+                    Category = c.Name,
+                    ProductsCount = c.CategoryProducts.Count(),
+                    AveragePrice = $"{c.CategoryProducts.Average(cp => cp.Product.Price):F2}",
+                    TotalRevenue = $"{c.CategoryProducts.Sum(cp => cp.Product.Price):F2}"
+                })
+                .ToArray();
 
+            DefaultContractResolver resolver = new DefaultContractResolver()
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                ContractResolver = resolver,
+                Formatting = Formatting.Indented
+            };
+
+            string categoriesJson = JsonConvert.SerializeObject(categories, settings);
+            return categoriesJson;
         }
 
         //Task 6
