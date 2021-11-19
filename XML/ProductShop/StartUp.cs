@@ -34,8 +34,80 @@ namespace ProductShop
             //Console.WriteLine(ImportCategoryProducts(context, inputCategoryProducts));
             ////Problem 5
             //Console.WriteLine(GetProductsInRange(context));
-            //Problem 6
-            Console.WriteLine(GetSoldProducts(context));
+            ////Problem 6
+            //Console.WriteLine(GetSoldProducts(context));
+            ////Problem 7
+            //Console.WriteLine(GetCategoriesByProductsCount(context));
+            ////Problem 8
+            //Console.WriteLine(GetUsersWithProducts(context));
+        }
+
+        //Problem 8
+        public static string GetUsersWithProducts(ProductShopContext context)
+        {
+            UserWithProductsCountOutputDto[] dtos = context
+                .Users
+                .Where(u => u.ProductsSold.Any())
+                .Select(u => new UserWithProductsCountOutputDto
+                {
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Age = u.Age,
+                    SoldProducts = new ProductCountDto
+                    {
+                        CountOfSoldProducts = u.ProductsSold.Count(),
+                        Products = u.ProductsSold
+                        .Select(p => new ProductDto
+                        {
+                            Name = p.Name,
+                            Price = p.Price
+                        })
+                        .OrderByDescending(p => p.Price)
+                        .ToList()
+                    }
+                })
+                .OrderByDescending(u => u.SoldProducts.CountOfSoldProducts)
+                .Take(10)
+                .ToArray();
+
+            XmlRootAttribute root = new XmlRootAttribute("Users");
+            XmlSerializer serializer = new XmlSerializer(typeof(UserWithProductsCountOutputDto[]), root);
+
+            StringBuilder sb = new StringBuilder();
+            using StringWriter writer = new StringWriter(sb);
+
+            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, string.Empty);
+            serializer.Serialize(writer, dtos, namespaces);
+
+            return sb.ToString().TrimEnd();
+        }
+
+        //Problem 7
+        public static string GetCategoriesByProductsCount(ProductShopContext context)
+        {
+            CategoryOutputDto[] dtos = context
+                .Categories
+                .Select(c => new CategoryOutputDto
+                {
+                    Name = c.Name,
+                    NumberOfProducts = c.CategoryProducts.Count(),
+                    AveragePrice = c.CategoryProducts.Average(cp => cp.Product.Price),
+                    TotalRevenue = c.CategoryProducts.Sum(cp => cp.Product.Price)
+                })
+                .OrderByDescending(c => c.NumberOfProducts)
+                .ThenBy(c => c.TotalRevenue)
+                .ToArray();
+
+            StringBuilder sb = new StringBuilder();
+            XmlSerializer serializer = new XmlSerializer(typeof(CategoryOutputDto[]), new XmlRootAttribute("Categories"));
+
+            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, string.Empty);
+            StringWriter writer = new StringWriter(sb);
+            serializer.Serialize(writer, dtos, namespaces);
+
+            return sb.ToString().TrimEnd();
         }
 
         //Problem 6
