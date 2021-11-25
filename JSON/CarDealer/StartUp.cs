@@ -78,8 +78,8 @@ namespace CarDealer
             //    Formatting = Formatting.Indented
             //};
 
-            string json = JsonConvert.SerializeObject(sales);
-            return json;
+            //string json = JsonConvert.SerializeObject(sales, serializerSettings);
+            return SerializeToJson(sales);
         }
 
         //Task 17
@@ -98,14 +98,14 @@ namespace CarDealer
                 .ThenByDescending(c => c.BoughtCars)
                 .ToArray();
 
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
+            //JsonSerializerSettings settings = new JsonSerializerSettings()
+            //{
+            //    Formatting = Formatting.Indented,
+            //    ContractResolver = new CamelCasePropertyNamesContractResolver()
+            //};
 
-            string json = JsonConvert.SerializeObject(customers, settings);
-            return json;
+            //string json = JsonConvert.SerializeObject(customers, settings);
+            return SerializeToJson(customers);
 
         }
 
@@ -133,14 +133,14 @@ namespace CarDealer
                 })
                 .ToArray();
 
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-                //ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
+            //JsonSerializerSettings settings = new JsonSerializerSettings()
+            //{
+            //    Formatting = Formatting.Indented,
+            //    //ContractResolver = new CamelCasePropertyNamesContractResolver()
+            //};
 
-            string json = JsonConvert.SerializeObject(carsAndParts, settings);
-            return json;
+            //string json = JsonConvert.SerializeObject(carsAndParts, settings);
+            return SerializeToJson(carsAndParts);
         }
 
         //Task 15
@@ -157,13 +157,13 @@ namespace CarDealer
                 })
                 .ToArray();
 
-            JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented
-            };
-            string json = JsonConvert.SerializeObject(localSuppliers, serializerSettings);
+            //JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+            //{
+            //    Formatting = Formatting.Indented
+            //};
+            //string json = JsonConvert.SerializeObject(localSuppliers, serializerSettings);
 
-            return json;
+            return SerializeToJson(localSuppliers);
         }
 
         //Task 14
@@ -183,13 +183,13 @@ namespace CarDealer
                 })
                 .ToArray();
 
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented
-            };
-            string json = JsonConvert.SerializeObject(toyoytaCars, settings);
+            //JsonSerializerSettings settings = new JsonSerializerSettings()
+            //{
+            //    Formatting = Formatting.Indented
+            //};
+            //string json = JsonConvert.SerializeObject(toyoytaCars, settings);
 
-            return json;
+            return SerializeToJson(toyoytaCars);
         }
 
         //Task 13
@@ -207,13 +207,13 @@ namespace CarDealer
                 })
                 .ToArray();
 
-            JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
-            {
-                Formatting = Formatting.Indented,
-            };
+            //JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+            //{
+            //    Formatting = Formatting.Indented,
+            //};
 
-            string json = JsonConvert.SerializeObject(customers, serializerSettings);
-            return json;
+            //string json = JsonConvert.SerializeObject(customers, serializerSettings);
+            return SerializeToJson(customers);
         }
 
         //Task 12
@@ -221,10 +221,10 @@ namespace CarDealer
         {
             ICollection<SaleInputDto> salesDtos = JsonConvert.DeserializeObject<ICollection<SaleInputDto>>(inputJson);
 
-            MapperConfiguration configuration = new MapperConfiguration(cfg => cfg.AddProfile<CarDealerProfile>());
-            IMapper mapper = new Mapper(configuration);
+            mapperconfiguration configuration = new mapperconfiguration(cfg => cfg.addprofile<cardealerprofile>());
+            imapper mapper = new mapper(configuration);
 
-            ICollection<Sale> sales = mapper.Map<ICollection<Sale>>(salesDtos);
+            icollection<sale> sales = mapper.map<icollection<sale>>(salesdtos);
 
             context.Sales.AddRange(sales);
             context.SaveChanges();
@@ -330,6 +330,18 @@ namespace CarDealer
             context.SaveChanges();
 
             return $"Successfully imported {suppliers.Count}.";
+        }
+
+        private static string SerializeToJson(ICollection<object> collection)
+        {
+            JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+            {
+                Formatting = Formatting.Indented,
+            };
+
+            string json = JsonConvert.SerializeObject(collection, serializerSettings);
+
+            return json;
         }
     }
 }

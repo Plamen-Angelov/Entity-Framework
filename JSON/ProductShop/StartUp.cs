@@ -35,7 +35,7 @@ namespace ProductShop
             //Console.WriteLine(ImportCategoryProducts(context, categoryProductJson));
             ////Task 5
             //Console.WriteLine(GetProductsInRange(context));
-            ////Task 6
+            ////task 6
             //Console.WriteLine(GetSoldProducts(context));
             ////Task 7
             //Console.WriteLine(GetCategoriesByProductsCount(context));
@@ -109,18 +109,7 @@ namespace ProductShop
                 })
                 .ToArray();
 
-            DefaultContractResolver resolver = new DefaultContractResolver()
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                ContractResolver = resolver,
-                Formatting = Formatting.Indented
-            };
-
-            string categoriesJson = JsonConvert.SerializeObject(categories, settings);
-            return categoriesJson;
+            return SerializeToJson(categories);
         }
 
         //Task 6
@@ -146,19 +135,7 @@ namespace ProductShop
                 .ThenBy(u => u.FirstName)
                 .ToArray();
 
-            DefaultContractResolver resolver = new DefaultContractResolver()
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
-
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                ContractResolver = resolver,
-                Formatting = Formatting.Indented
-            };
-
-            string soldProductsJson = JsonConvert.SerializeObject(products, settings);
-            return soldProductsJson;
+            return SerializeToJson(products);
         }
 
         //Task 5
@@ -176,19 +153,7 @@ namespace ProductShop
                 .OrderBy(p => p.Price)
                 .ToArray();
 
-            DefaultContractResolver resolver = new DefaultContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy()
-            };
-
-            var settings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                ContractResolver = resolver
-            };
-
-            string productsJson = JsonConvert.SerializeObject(products, settings);
-            return productsJson;
+            return SerializeToJson(products);
         }
 
         //Task 4
@@ -256,6 +221,24 @@ namespace ProductShop
         {
             MapperConfiguration config = new MapperConfiguration(cfg => cfg.AddProfile<ProductShopProfile>());
             mapper = new Mapper(config);
+        }
+
+        private static string SerializeToJson(ICollection<object> collection)
+        {
+            DefaultContractResolver resolver = new DefaultContractResolver()
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+
+            JsonSerializerSettings settings = new JsonSerializerSettings()
+            {
+                ContractResolver = resolver,
+                Formatting = Formatting.Indented
+            };
+
+            string json = JsonConvert.SerializeObject(collection, settings);
+
+            return json;
         }
     }
 }
