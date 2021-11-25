@@ -38,8 +38,8 @@ namespace ProductShop
             //Console.WriteLine(GetSoldProducts(context));
             ////Problem 7
             //Console.WriteLine(GetCategoriesByProductsCount(context));
-            ////Problem 8
-            //Console.WriteLine(GetUsersWithProducts(context));
+            //Problem 8
+            Console.WriteLine(GetUsersWithProducts(context));
         }
 
         //Problem 8
@@ -70,11 +70,9 @@ namespace ProductShop
                 .Take(10)
                 .ToArray();
 
-            XmlRootAttribute root = new XmlRootAttribute("Users");
-            XmlSerializer serializer = new XmlSerializer(typeof(UserWithProductsCountOutputDto[]), root);
-
             StringBuilder sb = new StringBuilder();
             using StringWriter writer = new StringWriter(sb);
+            XmlSerializer serializer = GenerateXmlSerializer("Users", typeof(UserWithProductsCountOutputDto[]));
 
             XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
             namespaces.Add(string.Empty, string.Empty);
@@ -134,9 +132,7 @@ namespace ProductShop
                 .ToArray();
 
             StringBuilder sb = new StringBuilder();
-
-            XmlRootAttribute root = new XmlRootAttribute("Users");
-            XmlSerializer serializer = new XmlSerializer(typeof(UserOutputDto[]), root);
+            XmlSerializer serializer = GenerateXmlSerializer("Users", typeof(UserOutputDto[]));
 
             XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
             namespaces.Add(string.Empty, string.Empty);
@@ -164,9 +160,8 @@ namespace ProductShop
                 .ToArray();
 
             StringBuilder sb = new StringBuilder();
+            XmlSerializer serializer = GenerateXmlSerializer("Products", typeof(ProductOutputDto[]));
 
-            XmlRootAttribute root = new XmlRootAttribute("Products");
-            XmlSerializer serializer = new XmlSerializer(typeof(ProductOutputDto[]), root);
             using StringWriter writer = new StringWriter(sb);
             
             XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
@@ -180,8 +175,8 @@ namespace ProductShop
         //Problem 4
         public static string ImportCategoryProducts(ProductShopContext context, string inputXml)
         {
-            XmlRootAttribute root = new XmlRootAttribute("CategoryProducts");
-            XmlSerializer serializer = new XmlSerializer(typeof(CategoryProductInputDto[]), root);
+            XmlSerializer serializer = GenerateXmlSerializer("CategoryProducts", typeof(CategoryProductInputDto[]));
+
             using StringReader reader = new StringReader(inputXml);
             CategoryProductInputDto[] dtos = (CategoryProductInputDto[])serializer.Deserialize(reader);
 
@@ -212,8 +207,8 @@ namespace ProductShop
         //Problem 3
         public static string ImportCategories(ProductShopContext context, string inputXml)
         {
-            XmlRootAttribute root = new XmlRootAttribute("Categories");
-            XmlSerializer serializer = new XmlSerializer(typeof(CategoryInputDto[]), root);
+            XmlSerializer serializer = GenerateXmlSerializer("Categories", typeof(CategoryInputDto[]));
+
             using StringReader stringReader = new StringReader(inputXml);
             CategoryInputDto[] dtos = (CategoryInputDto[])serializer.Deserialize(stringReader);
 
@@ -239,8 +234,7 @@ namespace ProductShop
         //problem 2
         public static string ImportProducts(ProductShopContext context, string inputXml)
         {
-            XmlRootAttribute root = new XmlRootAttribute("Products");
-            XmlSerializer serializer = new XmlSerializer(typeof(ProductInputDto[]), root);
+            XmlSerializer serializer = GenerateXmlSerializer("Products", typeof(ProductInputDto[]));
 
             using StringReader reader = new StringReader(inputXml);
             ProductInputDto[] dtos = (ProductInputDto[])serializer.Deserialize(reader);
@@ -259,8 +253,7 @@ namespace ProductShop
         //Problem 1
         public static string ImportUsers(ProductShopContext context, string inputXml)
         {
-            XmlRootAttribute xmlRoot = new XmlRootAttribute("Users");
-            XmlSerializer serializer = new XmlSerializer(typeof(UserInputDto[]), xmlRoot);
+            XmlSerializer serializer = GenerateXmlSerializer("Users", typeof(UserInputDto[]));
 
             using StringReader stringReader = new StringReader(inputXml);
             UserInputDto[] dtos = (UserInputDto[])serializer.Deserialize(stringReader);
@@ -282,6 +275,14 @@ namespace ProductShop
             context.SaveChanges();
 
             return $"Successfully imported {users.Count}";
+        }
+
+        private static XmlSerializer GenerateXmlSerializer(string xmlRoot, Type dtoType)
+        {
+            XmlRootAttribute root = new XmlRootAttribute(xmlRoot);
+            XmlSerializer serializer = new XmlSerializer(dtoType, root);
+
+            return serializer;
         }
     }
 }

@@ -324,8 +324,7 @@ namespace CarDealer
         //Problem 10
         public static string ImportParts(CarDealerContext context, string inputXml)
         {
-            XmlRootAttribute root = new XmlRootAttribute("Parts");
-            XmlSerializer serializer = new XmlSerializer(typeof(PartInputDto[]), root);
+            XmlSerializer serializer = GenerateXmlSerializer("Parts", typeof(PartInputDto[]));
 
             using StringReader reader = new StringReader(inputXml);
             PartInputDto[] dtos = (PartInputDto[])serializer.Deserialize(reader);
@@ -357,8 +356,7 @@ namespace CarDealer
         //Problem 9
         public static string ImportSuppliers(CarDealerContext context, string inputXml)
         {
-            XmlRootAttribute root = new XmlRootAttribute("Suppliers");
-            XmlSerializer serializer = new XmlSerializer(typeof(SuppliersInputDto[]), root);
+            XmlSerializer serializer = GenerateXmlSerializer("Suppliers", typeof(SuppliersInputDto[]));
 
             using StringReader reader = new StringReader(inputXml);
             SuppliersInputDto[] dtos = (SuppliersInputDto[])serializer.Deserialize(reader);
@@ -372,6 +370,14 @@ namespace CarDealer
             context.SaveChanges();
 
             return $"Successfully imported {suppliers.Count()}";
+        }
+
+        private static XmlSerializer GenerateXmlSerializer(string xmlRoot, Type type)
+        {
+            XmlRootAttribute root = new XmlRootAttribute(xmlRoot);
+            XmlSerializer serializer = new XmlSerializer(type, root);
+
+            return serializer;
         }
     }
 }
