@@ -79,7 +79,7 @@
 		private static void PrintAndExportEntityToFile(string entityOutput, string outputPath)
 		{
 			Console.WriteLine(entityOutput);
-			//File.WriteAllText(outputPath, entityOutput.TrimEnd());
+			File.WriteAllText(outputPath, entityOutput.TrimEnd());
 		}
 
 		private static string GetProjectDirectory()

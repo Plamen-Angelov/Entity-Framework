@@ -22,8 +22,7 @@
 				.Include(g => g.Games)
 				.ThenInclude(g => g.Purchases)
 				.Where(g => genreNames.Contains(g.Name))
-				.Where(g => g.Games.Count(g => g.Purchases.Any()) > 0)
-				//.Where(g => g.Games.Any(g => g.Purchases.Any()))
+				.Where(g => g.Games.Any(g => g.Purchases.Any()))
 				.ToArray()
 				.Select(g => new GenreExportDto()
 				{

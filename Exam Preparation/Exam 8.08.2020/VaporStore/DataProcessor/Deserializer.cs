@@ -202,6 +202,12 @@
 
 			StringBuilder sb = new StringBuilder();
 			List<Purchase> purchases = new List<Purchase>();
+			List<Game> games = context
+				.Games
+				.ToList();
+			List<Card> cards = context
+				.Cards
+				.ToList();
 
             foreach (var dto in purchaseDtos)
             {
@@ -228,35 +234,23 @@
 					continue;
 				}
 
-				Card card = context
-					.Cards
+				Card card = cards
 					.FirstOrDefault(c => c.Number == dto.CardNumber);
 
 				if (card == null)
                 {
-					card = new Card()
-					{
-						Number = dto.CardNumber
-					};
+					sb.AppendLine(GlobalConstants.Error_Message);
+					continue;
                 }
 
-				Game game = context
-					.Games
+				Game game = games
 					.FirstOrDefault(g => g.Name == dto.GameName);
 
 				if (game == null)
                 {
-					game = new Game()
-					{
-						Name = dto.GameName
-					};
+					sb.AppendLine(GlobalConstants.Error_Message);
+					continue;
                 }
-
-                //if (card == null || game == null)
-                //{
-                //    sb.AppendLine(GlobalConstants.Error_Message);
-                //    continue;
-                //}
 
                 Purchase purchase = new Purchase()
 				{
@@ -268,11 +262,7 @@
 				};
 
 				purchases.Add(purchase);
-
-				string[] name = card.User.FullName
-					.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-				string userName = $"{name[0].Substring(0,1).ToLower()}{name[1].ToLower()}";
-				sb.AppendLine($"Imported {dto.GameName} for {userName}");
+				sb.AppendLine($"Imported {dto.GameName} for {card.User.Username}");
             }
 
 			context.Purchases.AddRange(purchases);
