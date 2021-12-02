@@ -4,6 +4,8 @@
     {
         //Prisoner
 
+        public const int Prisoner_FullName_MinLenght = 3;
+
         public const int Prisoner_FullName_MaxLenght = 20;
 
         public const int Prisoner_Age_MinValue = 18;
@@ -16,7 +18,7 @@
 
         //Officer
 
-        public const int Prisoner_FullName_MinLenght = 3;
+        public const int Officer_FullName_MinLenght = 3;
 
         public const int Officer_FullName_MaxLenght = 30;
 

@@ -5,13 +5,16 @@
     using Newtonsoft.Json;
     using SoftJail.Common;
     using SoftJail.Data.Models;
+    using SoftJail.Data.Models.Enums;
     using SoftJail.DataProcessor.ImportDto;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Xml.Serialization;
 
     public class Deserializer
     {
@@ -157,7 +160,66 @@
 
         public static string ImportOfficersPrisoners(SoftJailDbContext context, string xmlString)
         {
-            throw new NotImplementedException();
+            XmlSerializer serializer = new XmlSerializer(typeof(OfficerImportDto[]), new XmlRootAttribute("Officers"));
+
+            using StringReader reader = new StringReader(xmlString);
+            OfficerImportDto[] officerDtos = (OfficerImportDto[])serializer.Deserialize(reader);
+            StringBuilder sb = new StringBuilder();
+            List<Officer> officers = new List<Officer>();
+
+            foreach (var dto in officerDtos)
+            {
+                if (!IsValid(dto))
+                {
+                    sb.AppendLine(GlobalConstants.Error_Message);
+                    continue;
+                }
+
+                bool isValidPosition = Enum.TryParse(typeof(Position), dto.Position, out var position);
+
+                if (!isValidPosition)
+                {
+                    sb.AppendLine(GlobalConstants.Error_Message);
+                    continue;
+                }
+
+                bool isValidWeapon = Enum.TryParse(typeof(Weapon), dto.Weapon, out var weapon);
+
+                if (!isValidWeapon)
+                {
+                    sb.AppendLine(GlobalConstants.Error_Message);
+                    continue;
+                }
+
+                Officer officer = new Officer()
+                {
+                    FullName = dto.FullName,
+                    Salary = dto.Salary,
+                    Position = (Position)position,
+                    Weapon = (Weapon)weapon,
+                    DepartmentId = dto.DepartmentId
+                };
+
+                List<OfficerPrisoner> officerPrisoners = new List<OfficerPrisoner>();
+
+                foreach (var prisonerDto in dto.Prisoners)
+                {
+                    OfficerPrisoner officerPrisoner = new OfficerPrisoner()
+                    {
+                        PrisonerId = int.Parse(prisonerDto.Id),
+                        Officer = officer
+                    };
+
+                    officerPrisoners.Add(officerPrisoner);
+                }
+
+                officer.OfficerPrisoners = officerPrisoners;
+                officers.Add(officer);
+                sb.AppendLine($"Imported {officer.FullName} ({officerPrisoners.Count} prisoners)");
+            }
+            context.Officers.AddRange(officers);
+            context.SaveChanges();
+            return sb.ToString().TrimEnd();
         }
 
         private static bool IsValid(object obj)
