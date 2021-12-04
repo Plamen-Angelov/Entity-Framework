@@ -1,6 +1,6 @@
 ﻿namespace SoftJail.Common
 {
-    public class GlobalConstants
+    public static class GlobalConstants
     {
         //Prisoner
 
